@@ -9,7 +9,7 @@ from lightning import LightningDataModule
 from src.sfm import manifold_from_name
 
 
-class ToyDataset(torch.utils.data.IterableDataset):
+class ToyDataset(Dataset):
     """
     Adapted from `https://github.com/HannesStark/dirichlet-flow-matching/blob/main/utils/dataset.py`.
     """
@@ -24,12 +24,11 @@ class ToyDataset(torch.utils.data.IterableDataset):
     def __len__(self) -> int:
         return self.sz
 
-    def __iter__(self):
-        while True:
-            sample = torch.multinomial(replacement=True, num_samples=1, input=self.probs).squeeze()
-            one_hot = nn.functional.one_hot(sample, self.alphabet_size).float()
-            # if there is a need to smooth labels, it is done in the model's training step
-            yield one_hot.reshape((self.seq_len, self.alphabet_size))
+    def __getitem__(self, index: int) -> Tensor:
+        sample = torch.multinomial(replacement=True, num_samples=1, input=self.probs).squeeze()
+        one_hot = nn.functional.one_hot(sample, self.alphabet_size).float()
+        # if there is a need to smooth labels, it is done in the model's training step
+        return one_hot.reshape((self.seq_len, self.alphabet_size))
 
 
 class ToyDFMDataModule(LightningDataModule):
@@ -108,6 +107,7 @@ class ToyDFMDataModule(LightningDataModule):
             batch_size=self.batch_size_per_device,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
+            persistent_workers=self.hparams.num_workers > 0,
         )
 
     def val_dataloader(self) -> DataLoader[Any]:
@@ -121,6 +121,7 @@ class ToyDFMDataModule(LightningDataModule):
             batch_size=self.batch_size_per_device,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
+            persistent_workers=self.hparams.num_workers > 0,
             shuffle=False,
         )
 
@@ -135,6 +136,7 @@ class ToyDFMDataModule(LightningDataModule):
             batch_size=self.batch_size_per_device,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
+            persistent_workers=self.hparams.num_workers > 0,
             shuffle=False,
         )
 
