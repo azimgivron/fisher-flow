@@ -91,6 +91,7 @@ class MoleculeDataModule(LightningDataModule):
             shuffle=True, 
             collate_fn=dgl.batch, 
             num_workers=self.num_workers,
+            persistent_workers=self.num_workers > 0,
         )
         return dataloader
     
@@ -123,6 +124,7 @@ class MoleculeDataModule(LightningDataModule):
             shuffle=True,
             collate_fn=dgl.batch,
             num_workers=self.num_workers,
+            persistent_workers=self.num_workers > 0,
         )
         return dataloader
     
@@ -134,6 +136,7 @@ class MoleculeDataModule(LightningDataModule):
             shuffle=True,
             collate_fn=dgl.batch,
             num_workers=self.num_workers,
+            persistent_workers=self.num_workers > 0,
         )
         return dataloader
 

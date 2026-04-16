@@ -1,8 +1,8 @@
 # ALL TAKEN FROM: https://github.com/HannesStark/dirichlet-flow-matching
 from collections import namedtuple
 from functools import wraps
+from importlib.resources import as_file, files
 import os
-import pkg_resources
 import pandas as pd
 import torch
 import numpy as np
@@ -94,17 +94,17 @@ class MemmapGenome(Genome):
             self._blacklist_tabix = None
 
             if self.blacklist_regions == "hg19":
-                self._blacklist_tabix = tabix.open(
-                    pkg_resources.resource_filename(
-                        "selene_sdk", "sequences/data/hg19_blacklist_ENCFF001TDO.bed.gz"
+                with as_file(
+                    files("selene_sdk").joinpath(
+                        "sequences/data/hg19_blacklist_ENCFF001TDO.bed.gz"
                     )
-                )
+                ) as blacklist_path:
+                    self._blacklist_tabix = tabix.open(str(blacklist_path))
             elif self.blacklist_regions == "hg38":
-                self._blacklist_tabix = tabix.open(
-                    pkg_resources.resource_filename(
-                        "selene_sdk", "sequences/data/hg38.blacklist.bed.gz"
-                    )
-                )
+                with as_file(
+                    files("selene_sdk").joinpath("sequences/data/hg38.blacklist.bed.gz")
+                ) as blacklist_path:
+                    self._blacklist_tabix = tabix.open(str(blacklist_path))
             elif self.blacklist_regions is not None:  # user-specified file
                 self._blacklist_tabix = tabix.open(self.blacklist_regions)
 

@@ -75,6 +75,7 @@ class PromoterDesignDataModule(LightningDataModule):
             shuffle=True,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
+            persistent_workers=self.hparams.num_workers > 0,
         )
 
     def val_dataloader(self) -> DataLoader[Any]:
@@ -88,6 +89,7 @@ class PromoterDesignDataModule(LightningDataModule):
             batch_size=self.batch_size_per_device,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
+            persistent_workers=self.hparams.num_workers > 0,
             shuffle=False,
         )
 
@@ -102,6 +104,7 @@ class PromoterDesignDataModule(LightningDataModule):
             batch_size=self.batch_size_per_device,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
+            persistent_workers=self.hparams.num_workers > 0,
             shuffle=False,
         )
 
